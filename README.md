@@ -77,7 +77,7 @@
 
 ###
 
-<img align="right" height="225" src="https://media.tenor.com/13MO7LUAShwAAAAM/fadding-cat.gif"  />
+<img align="right" height="205" src="https://media.tenor.com/13MO7LUAShwAAAAM/fadding-cat.gif"  />
 
 ###
 
