@@ -85,8 +85,8 @@
 ###
 
 <div align="left">
-  <img src="http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=dev-kohako&theme=radical" height="193" alt="Profile details badge"/>
-  <img src="http://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=dev-kohako&theme=radical" height="193" alt="Top languages by repo badge"/>
+  <img src="http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=dev-kohako&theme=radical" height="170" alt="Profile details badge"/>
+  <img src="http://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=dev-kohako&theme=radical" height="170" alt="Top languages by repo badge"/>
 </div>
 
 ###
