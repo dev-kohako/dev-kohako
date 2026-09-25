@@ -1,5 +1,7 @@
 // Writes preview.html: the README as it will look on GitHub, dark and light
 // side by side, reading the SVGs from dist/. Run build.mjs first.
+//
+//   node scripts/preview.mjs --dist dist-neon --out preview-neon.html
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -7,6 +9,11 @@ import path from 'node:path';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const readme = (await readFile(path.join(root, 'README.md'), 'utf8')).replace(/<!--[\s\S]*?-->/g, '');
 const remote = /https:\/\/raw\.githubusercontent\.com\/[^/]+\/[^/]+\/output\//g;
+const arg = (flag, fallback) => {
+  const i = process.argv.indexOf(flag);
+  return i > -1 ? process.argv[i + 1] : fallback;
+};
+const dist = arg('--dist', 'dist'), out = arg('--out', 'preview.html');
 
 // Just enough markdown for this README: paragraphs, links, bold.
 const md = (s) =>
@@ -22,11 +29,11 @@ const themed = (html, theme) =>
     return inner.replace(/<source[^>]*>/g, '').replace(/src="[^"]+"/, `src="${src}"`).trim();
   });
 
-const body = md(readme).replace(remote, 'dist/');
+const body = md(readme).replace(remote, `${dist}/`);
 const column = (theme) => `<section class="${theme}"><div class="box"><div class="head">dev-kohako / README.md</div><article>${themed(body, theme)}</article></div></section>`;
 
 await writeFile(
-  path.join(root, 'preview.html'),
+  path.join(root, out),
   `<!doctype html><meta charset="utf-8"><title>Profile preview</title>
 <style>
 body{margin:0;display:grid;grid-template-columns:1fr 1fr;font:16px/1.5 -apple-system,'Segoe UI',Helvetica,Arial,sans-serif}
@@ -42,4 +49,4 @@ p{margin:0 0 16px}
 </style>
 ${column('dark')}${column('light')}`,
 );
-console.log('wrote preview.html');
+console.log(`wrote ${out}`);

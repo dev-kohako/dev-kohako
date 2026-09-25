@@ -29,13 +29,13 @@ export function skyline(t, cfg, data) {
     const n = [cx, cy - B * SHRINK], e = [cx + A * SHRINK, cy], s = [cx, cy + B * SHRINK], w = [cx - A * SHRINK, cy];
     const up = (p) => [p[0], p[1] - h];
     const top = t.levels[d.level];
-    const left = mix(top, t.sideMix, 0.3), right = mix(top, t.sideMix, 0.5);
+    const [left, right] = t.faces(top);
     const delay = (i + j) * 16;
     const shine = d.count
       ? `<polygon class="sh" points="${poly([up(n), up(e), up(s), up(w)])}" fill="${t.shimmer}" style="animation-delay:${r1(1.2 + (i + j) * 0.045)}s"/>`
       : '';
     const today = d.date === lastDate
-      ? `<polygon class="today" points="${poly([up(n), up(e), up(s), up(w)])}" stroke="${t.amberHi}" stroke-width="1.4"/>`
+      ? `<polygon class="today" points="${poly([up(n), up(e), up(s), up(w)])}" stroke="${t.accentHi}" stroke-width="1.4"/>`
       : '';
     prisms += `<g class="p" style="animation-delay:${delay}ms"><polygon points="${poly([w, up(w), up(s), s])}" fill="${left}"/><polygon points="${poly([s, up(s), up(e), e])}" fill="${right}"/><polygon points="${poly([up(n), up(e), up(s), up(w)])}" fill="${top}"/>${shine}${today}</g>`;
   }
@@ -50,7 +50,7 @@ export function skyline(t, cfg, data) {
     const m = Number(date.split('-')[1]) - 1;
     if (m !== prev && week > 0) {
       const x = OX + (week - 6) * A - 4, y = OY + (week + 6) * B + 18;
-      months += `<text transform="translate(${r1(x)} ${r1(y)}) rotate(${r1(angle)})" class="mono" font-size="9" fill="${t.faint}">${MONTHS[m]}</text>`;
+      months += `<text transform="translate(${r1(x)} ${r1(y)}) rotate(${r1(angle)})" class="${t.mono}" font-size="9" fill="${t.faint}">${MONTHS[m]}</text>`;
     }
     prev = m;
   }
@@ -58,11 +58,11 @@ export function skyline(t, cfg, data) {
   // Stats in the empty top-right triangle.
   const sx = 548;
   const stat = (x, y, label, value, sub = '') =>
-    `<text x="${x}" y="${y}" class="mono" font-size="9" letter-spacing=".8" fill="${t.faint}">${label}</text><text x="${x}" y="${y + 21}" class="sans" font-size="19" font-weight="700" fill="${t.text}">${value}${sub ? `<tspan class="mono" font-size="10" font-weight="400" fill="${t.muted}"> ${sub}</tspan>` : ''}</text>`;
+    `<text x="${x}" y="${y}" class="${t.mono}" font-size="9" letter-spacing=".8" fill="${t.faint}">${label}</text><text x="${x}" y="${y + 21}" class="${t.sans}" font-size="19" font-weight="700" fill="${t.text}">${value}${sub ? `<tspan class="${t.mono}" font-size="10" font-weight="400" fill="${t.muted}"> ${sub}</tspan>` : ''}</text>`;
   const stats = `
-<text x="${sx}" y="46" class="mono" font-size="11" fill="${t.amber}">// fig. 3 — a year, crystallized</text>
-<text x="${sx - 2}" y="96" class="sans" font-size="46" font-weight="700" letter-spacing="-1" fill="${t.text}">${fmt(data.calendar.total)}</text>
-<text x="${sx}" y="117" class="sans" font-size="13" fill="${t.muted}">contributions in the last 12 months</text>
+${t.kicker(sx, 46, t.words.fig3, 3)}
+<text x="${sx - 2}" y="96" class="${t.sans}" font-size="46" font-weight="700" letter-spacing="-1" fill="${t.text}">${fmt(data.calendar.total)}</text>
+<text x="${sx}" y="117" class="${t.sans}" font-size="13" fill="${t.muted}">contributions in the last 12 months</text>
 ${stat(sx, 148, 'COMMITS', fmt(data.counts.commits))}
 ${stat(sx + 90, 148, 'PULL REQUESTS', fmt(data.counts.prs))}
 ${stat(sx + 190, 148, 'STARS', fmt(data.stars))}
@@ -73,20 +73,20 @@ ${stat(sx + 190, 196, 'BEST DAY', st.best.count, st.best.date ? shortDate(st.bes
   // Languages in the empty bottom-left triangle.
   const langs = data.languages.slice(0, 6);
   const lx = 32, ly = 318;
-  let langRows = `<text x="${lx}" y="${ly}" class="mono" font-size="11" fill="${t.amber}">// languages, by bytes in public repos</text>`;
+  let langRows = t.kicker(lx, ly, t.words.langs);
   langs.forEach((l, k) => {
     const y = ly + 24 + k * 19;
-    const color = mix(t.amberHi, t.amberLo, k / Math.max(1, langs.length - 1));
+    const color = t.bar(k, langs.length);
     const bw = Math.max(2, l.share * 150);
-    langRows += `<g class="bar" style="animation-delay:${900 + k * 90}ms"><text x="${lx}" y="${y}" class="mono" font-size="10.5" fill="${t.muted}">${esc(l.name)}</text><rect x="${lx + 92}" y="${y - 8}" width="150" height="8" rx="4" fill="${t.levels[0]}"/><rect x="${lx + 92}" y="${y - 8}" width="${r1(bw)}" height="8" rx="4" fill="${color}"/><text x="${lx + 250}" y="${y}" class="mono" font-size="10.5" fill="${t.faint}">${(l.share * 100).toFixed(1)}%</text></g>`;
+    langRows += `<g class="bar" style="animation-delay:${900 + k * 90}ms"><text x="${lx}" y="${y}" class="${t.mono}" font-size="10.5" fill="${t.muted}">${esc(l.name)}</text><rect x="${lx + 92}" y="${y - 8}" width="150" height="8" rx="4" fill="${t.levels[0]}"/><rect x="${lx + 92}" y="${y - 8}" width="${r1(bw)}" height="8" rx="4" fill="${color}"/><text x="${lx + 250}" y="${y}" class="${t.mono}" font-size="10.5" fill="${t.faint}">${(l.share * 100).toFixed(1)}%</text></g>`;
   });
 
-  let legend = `<text x="${W - 196}" y="${H - 22}" class="mono" font-size="9" fill="${t.faint}">less</text>`;
+  let legend = `<text x="${W - 196}" y="${H - 22}" class="${t.mono}" font-size="9" fill="${t.faint}">less</text>`;
   t.levels.forEach((c, k) => {
     const x = W - 162 + k * 20, y = H - 26;
     legend += `<polygon points="${poly([[x, y - 5], [x + 8, y], [x, y + 5], [x - 8, y]])}" fill="${c}" stroke="${mix(c, t.sideMix, 0.4)}" stroke-width=".6"/>`;
   });
-  legend += `<text x="${W - 60}" y="${H - 22}" class="mono" font-size="9" fill="${t.faint}">more</text>`;
+  legend += `<text x="${W - 60}" y="${H - 22}" class="${t.mono}" font-size="9" fill="${t.faint}">more</text>`;
 
   const css = `
 .p{opacity:0;animation:grow .7s cubic-bezier(.2,.8,.2,1) forwards}
@@ -113,5 +113,6 @@ ${legend}`;
     desc: `An isometric landscape of amber crystals, one per day, taller on busier days. ${fmt(data.counts.commits)} commits, ${fmt(data.counts.prs)} pull requests, current streak ${st.current} days, longest ${st.longest} days. Top languages: ${langs.map((l) => `${l.name} ${(l.share * 100).toFixed(1)}%`).join(', ')}.`,
     css,
     body,
+    fonts: t.fonts,
   });
 }

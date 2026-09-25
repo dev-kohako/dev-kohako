@@ -2,3 +2,5 @@ dist/
 preview.html
 data.json
 .pages/
+dist-*/
+preview-*.html

@@ -11,11 +11,13 @@ const FONTS = `
 .serif{font-family:Georgia,'Iowan Old Style','Palatino Linotype',Palatino,'Times New Roman',serif}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}}`;
 
-export function doc({ w, h, title, desc, css = '', defs = '', body }) {
+// `fonts` is skin CSS: class stacks and, for skins with a brand font, an
+// embedded @font-face (an <img> SVG cannot fetch anything).
+export function doc({ w, h, title, desc, css = '', defs = '', body, fonts = '' }) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none" role="img" aria-labelledby="title desc">
 <title id="title">${esc(title)}</title>
 <desc id="desc">${esc(desc)}</desc>
-<defs><style>${FONTS}${css}</style>${defs}</defs>
+<defs><style>${FONTS}${fonts}${css}</style>${defs}</defs>
 ${body}
 </svg>
 `;
@@ -99,3 +101,12 @@ export function smoothClosed(pts, tension = 1) {
 }
 
 export const poly = (pts) => pts.map((p) => `${r1(p[0])},${r1(p[1])}`).join(' ');
+
+export const ago = (iso, now) => {
+  const days = Math.max(0, Math.round((now - new Date(iso)) / 86400000));
+  if (days === 0) return 'today';
+  if (days === 1) return 'yesterday';
+  if (days < 45) return `${days} days ago`;
+  const months = Math.round(days / 30);
+  return months < 12 ? `${months} months ago` : `${Math.round(months / 12)} years ago`;
+};

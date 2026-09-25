@@ -13,6 +13,9 @@
 
 export default {
   login: 'dev-kohako',
+  // Which look to draw: 'amber' (琥珀, the museum of amber) or 'neon' (the
+  // palette and props of josephkawe.com).
+  skin: 'amber',
   name: 'Joseph Kawe',
   location: 'Brazil',
   kicker: '琥珀 kohako — japanese for amber',
@@ -25,6 +28,13 @@ export default {
     'building 3D worlds for the web',
     'powered by cafézinho',
   ],
+
+  // Neon skin only: the label over the name and the technologies that flicker
+  // on under it, one at a time, like a sign.
+  neon: {
+    kicker: 'from games to code',
+    words: ['NestJS', 'React', 'TypeScript', 'Next.js', 'Vue', 'Laravel', 'Three.js', 'Cloudflare'],
+  },
 
   // The periodic table. The first category fills the tall left columns, the
   // last one the tall right columns, and the rest sit in the 3-row middle.

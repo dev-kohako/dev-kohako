@@ -1,4 +1,4 @@
-import { doc, esc, panel, r1, r2, rng } from '../lib/svg.mjs';
+import { ago, doc, esc, panel, r1, r2, rng } from '../../lib/svg.mjs';
 
 const W = 840, H = 300;
 
@@ -51,18 +51,9 @@ function typing(roles, x, y, size, t) {
     body += `<text x="${x}" y="${y}" class="mono" font-size="${size}" fill="${t.text}" textLength="${r2(seg.n * cw)}" lengthAdjust="spacing" clip-path="url(#role${i})">${esc(seg.role)}</text>`;
   });
   const caret = [[0, 0], ...segs.flatMap((s) => frames(s).slice(1))];
-  body += `<rect x="${x}" y="${y - size * 0.82}" width="${r1(size * 0.52)}" height="${r1(size * 1.05)}" rx="1" fill="${t.amber}" class="blink">${anim('x', caret, x)}</rect>`;
+  body += `<rect x="${x}" y="${y - size * 0.82}" width="${r1(size * 0.52)}" height="${r1(size * 1.05)}" rx="1" fill="${t.accent}" class="blink">${anim('x', caret, x)}</rect>`;
   return { defs, body };
 }
-
-const ago = (iso, now) => {
-  const days = Math.max(0, Math.round((now - new Date(iso)) / 86400000));
-  if (days === 0) return 'today';
-  if (days === 1) return 'yesterday';
-  if (days < 45) return `${days} days ago`;
-  const months = Math.round(days / 30);
-  return months < 12 ? `${months} months ago` : `${Math.round(months / 12)} years ago`;
-};
 
 export function hero(t, cfg, data, now = new Date()) {
   const R = rng('hero');
@@ -75,13 +66,13 @@ export function hero(t, cfg, data, now = new Date()) {
       const y = y0 + Math.sin((x / W) * 6.28 * f + ph) * amp + Math.sin(x / 83 + k) * 3;
       d += `${x === -20 ? 'M' : 'L'}${x} ${r1(y)}`;
     }
-    contours += `<path class="flow" d="${d}" stroke="${t.amber}" stroke-opacity="${t.contour}" style="animation-delay:-${r1(R() * 30)}s"/>`;
+    contours += `<path class="flow" d="${d}" stroke="${t.accent}" stroke-opacity="${t.contour}" style="animation-delay:-${r1(R() * 30)}s"/>`;
   }
 
   let motes = '';
   for (let k = 0; k < 18; k++) {
     const dur = 7 + R() * 9;
-    motes += `<circle class="mote" cx="${r1(20 + R() * 800)}" cy="${r1(190 + R() * 110)}" r="${r1(0.7 + R() * 1.7)}" fill="${t.amberHi}" style="animation-duration:${r1(dur)}s;animation-delay:-${r1(R() * dur)}s"/>`;
+    motes += `<circle class="mote" cx="${r1(20 + R() * 800)}" cy="${r1(190 + R() * 110)}" r="${r1(0.7 + R() * 1.7)}" fill="${t.accentHi}" style="animation-duration:${r1(dur)}s;animation-delay:-${r1(R() * dur)}s"/>`;
   }
 
   let bubbles = '';
@@ -111,8 +102,8 @@ export function hero(t, cfg, data, now = new Date()) {
 
   const defs = `
 <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${t.bg2}"/><stop offset=".6" stop-color="${t.bg}"/></linearGradient>
-<radialGradient id="warm" cx="78%" cy="45%" r="60%"><stop offset="0" stop-color="${t.amber}" stop-opacity=".2"/><stop offset="1" stop-color="${t.amber}" stop-opacity="0"/></radialGradient>
-<linearGradient id="name" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${t.text}"/><stop offset=".55" stop-color="${t.text}"/><stop offset="1" stop-color="${t.amberHi}"/></linearGradient>
+<radialGradient id="warm" cx="78%" cy="45%" r="60%"><stop offset="0" stop-color="${t.accent}" stop-opacity=".2"/><stop offset="1" stop-color="${t.accent}" stop-opacity="0"/></radialGradient>
+<linearGradient id="name" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${t.text}"/><stop offset=".55" stop-color="${t.text}"/><stop offset="1" stop-color="${t.accentHi}"/></linearGradient>
 <radialGradient id="gem" cx="38%" cy="30%" r="78%"><stop offset="0" stop-color="#fff2c4"/><stop offset=".18" stop-color="#ffcb52"/><stop offset=".46" stop-color="#f59e0b"/><stop offset=".76" stop-color="#c2610a"/><stop offset="1" stop-color="#6b2d04"/></radialGradient>
 <radialGradient id="edge" cx="50%" cy="50%" r="54%"><stop offset=".62" stop-color="#3a1602" stop-opacity="0"/><stop offset="1" stop-color="#3a1602" stop-opacity=".6"/></radialGradient>
 <radialGradient id="halo" r="50%"><stop offset="0" stop-color="#f5a524" stop-opacity=".42"/><stop offset=".55" stop-color="#f5a524" stop-opacity=".08"/><stop offset="1" stop-color="#f5a524" stop-opacity="0"/></radialGradient>
@@ -135,12 +126,12 @@ ${panel(t, W, H)}
 <rect x=".5" y=".5" width="${W - 1}" height="${H - 1}" rx="16" stroke="${t.stroke}"/>
 
 <g class="in">
-  <text x="48" y="74" class="mono" font-size="12.5" letter-spacing=".5" fill="${t.faint}"><tspan fill="${t.amber}">${esc(cfg.kicker.split(' ')[0])}</tspan> ${esc(cfg.kicker.split(' ').slice(1).join(' '))}</text>
+  <text x="48" y="74" class="mono" font-size="12.5" letter-spacing=".5" fill="${t.faint}"><tspan fill="${t.accent}">${esc(cfg.kicker.split(' ')[0])}</tspan> ${esc(cfg.kicker.split(' ').slice(1).join(' '))}</text>
   <text x="45" y="136" class="sans" font-size="56" font-weight="700" letter-spacing="-1.5" fill="url(#name)">${esc(cfg.name)}</text>
 </g>
-<text x="48" y="184" class="mono" font-size="17" fill="${t.amber}">&gt;</text>
+<text x="48" y="184" class="mono" font-size="17" fill="${t.accent}">&gt;</text>
 ${type.body}
-<rect x="48" y="210" width="36" height="2" rx="1" fill="${t.amber}"/>
+<rect x="48" y="210" width="36" height="2" rx="1" fill="${t.accent}"/>
 <text x="48" y="240" class="sans" font-size="13.5" fill="${t.muted}">${esc(cfg.location)}${
     latest ? ` · last pushed <tspan fill="${t.text}" font-weight="600">${esc(latest.name)}</tspan> ${esc(ago(latest.pushedAt, now))}` : ''
   }</text>
