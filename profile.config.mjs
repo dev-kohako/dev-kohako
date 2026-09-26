@@ -15,7 +15,7 @@ export default {
   login: 'dev-kohako',
   // Which look to draw: 'amber' (琥珀, the museum of amber) or 'neon' (the
   // palette and props of josephkawe.com).
-  skin: 'amber',
+  skin: 'neon',
   name: 'Joseph Kawe',
   location: 'Brazil',
   kicker: '琥珀 kohako — japanese for amber',
